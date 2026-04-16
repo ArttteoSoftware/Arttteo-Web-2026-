@@ -23,6 +23,10 @@ class EngagementsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+                Forms\Components\FileUpload::make('picture')
+                    ->image()
+                    ->directory('engagements')
+                    ->columnSpanFull(),
                 TinyEditor::make('description')
                     ->profile('default')
                     ->columnSpanFull(),
@@ -34,6 +38,7 @@ class EngagementsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
+                Tables\Columns\ImageColumn::make('picture'),
                 Tables\Columns\TextColumn::make('title'),
             ])
             ->filters([

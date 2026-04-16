@@ -36,8 +36,10 @@ class PortfolioResource extends JsonResource
                     'id' => $eng->id,
                     'title' => $eng->title,
                     'description' => $eng->description,
+                    'picture' => $eng->picture ? url('storage/' . $eng->picture) : null,
                 ];
             }),
+            'quote_text' => $this->quote_text,
         ];
     }
 }
