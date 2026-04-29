@@ -32,10 +32,17 @@ class PortfolioResource extends Resource
                 Forms\Components\Section::make('Basic Info')->schema([
                     Forms\Components\TextInput::make('company_name')->required()->maxLength(255),
                     Forms\Components\TextInput::make('project_name')->required()->maxLength(255),
+                    Forms\Components\TextInput::make('year')->numeric(),
+                    Forms\Components\Select::make('category_id')
+                        ->relationship('category', 'name')
+                        ->label('Category')
+                        ->searchable()
+                        ->preload(),
                     Forms\Components\FileUpload::make('main_picture')
                         ->image()
                         ->directory('portfolios')
                         ->columnSpanFull(),
+                    Forms\Components\Textarea::make('description')->columnSpanFull(),
                     Forms\Components\TextInput::make('duration')->maxLength(255),
                     Forms\Components\TextInput::make('scope')->maxLength(255),
                     Forms\Components\TextInput::make('team_size')->numeric(),
@@ -46,6 +53,7 @@ class PortfolioResource extends Resource
                     TinyEditor::make('solution')->profile('default')->columnSpanFull()->label('The Solution'),
                     TinyEditor::make('result')->profile('default')->columnSpanFull()->label('The Result'),
                     TinyEditor::make('quote_text')->profile('default')->columnSpanFull()->label('Quote Text'),
+                    TinyEditor::make('engagement_text')->profile('default')->columnSpanFull()->label('Engagement Text'),
                 ]),
             ]);
     }
