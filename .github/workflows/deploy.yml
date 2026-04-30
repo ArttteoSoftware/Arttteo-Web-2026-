@@ -1,0 +1,70 @@
+name: Build and Deploy arttteo-api
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: SSH into EC2 and deploy container
+        env:
+          PULL_TOKEN: ${{ secrets.PULL_TOKEN }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            set -e
+
+            echo "--- CONNECTED TO EC2 ---"
+            cd /home/ubuntu/Arttteo-Web-2026-
+
+            echo "--- FIX OWNERSHIP & SAFE GIT DIRECTORY ---"
+            sudo chown -R ubuntu:ubuntu .
+            git config --global --add safe.directory \$(pwd)
+
+            echo "--- CLEAN & UPDATE REPO ---"
+            git reset --hard
+            git clean -fd
+            git remote set-url origin https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git
+            git pull origin main
+
+            echo "--- HOST PERMISSION FIX BEFORE BUILD ---"
+            sudo chown -R www-data:www-data storage bootstrap/cache || true
+            sudo chmod -R 775 storage bootstrap/cache || true
+
+            echo "--- BUILD & START CONTAINERS ---"
+            sudo docker compose up -d --build
+
+            echo "--- WAITING FOR MYSQL TO BE READY ---"
+            until sudo docker exec arttteo-mysql mysqladmin ping -u root -proot --silent &> /dev/null; do
+              echo "MySQL not ready yet..."
+              sleep 2
+            done
+            echo "MySQL is READY!"
+
+            echo "--- RUNNING LARAVEL COMMANDS INSIDE CONTAINER ---"
+            sudo docker exec arttteo-app bash -c "
+              set -e
+              composer install --no-interaction --prefer-dist &&
+              php artisan migrate --force &&
+              php artisan optimize:clear &&
+              chown -R www-data:www-data storage bootstrap/cache &&
+              chmod -R 775 storage bootstrap/cache
+            "
+
+            echo "--- SHOW RUNNING CONTAINERS ---"
+            sudo docker ps
+
+            echo "--- DEPLOYMENT COMPLETED SUCCESSFULLY ✅ ---"
+          EOF
