@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: arttteo-app
+    ports:
+      - "8080:80"
+    env_file:
+      - /home/ubuntu/configs/.env
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: arttteo-mysql
+    env_file:
+      - /home/ubuntu/configs/.env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-artteo_db}
+      MYSQL_USER: ${DB_USERNAME:-artteo_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-WoaO9HtH6JYaxHJE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    volumes:
+      - dbdata:/var/lib/mysql
+      - /home/ubuntu/mysql-conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+
+volumes:
+  dbdata:
+    name: artteo-mysql-data
