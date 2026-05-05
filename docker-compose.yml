@@ -18,8 +18,6 @@ services:
   db:
     image: mysql:8.0
     container_name: arttteo-mysql
-    env_file:
-      - /home/ubuntu/configs/.env
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-artteo_db}
       MYSQL_USER: ${DB_USERNAME:-artteo_user}
