@@ -20,8 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('app.url') === 'https://api.arttteo.com') {
-            URL::forceScheme('https');
-        }
+        URL::forceScheme('https');
+
+        request()->server->set('HTTPS', 'on');
     }
 }
