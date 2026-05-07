@@ -25,6 +25,8 @@ class PortfolioResource extends JsonResource
             'challenge' => $this->challenge,
             'solution' => $this->solution,
             'result' => $this->result,
+            'category' => $this->category->name,
+            'year' => $this->year,
             'images' => $this->images->map(function($img) {
                 return [
                     'id' => $img->id,

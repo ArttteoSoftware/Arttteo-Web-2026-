@@ -14,7 +14,7 @@ class PortfolioController extends Controller
      */
     public function index()
     {
-        $portfolios = Portfolio::latest()->get();
+        $portfolios = Portfolio::with('category')->latest()->get();
         return PortfolioIndexResource::collection($portfolios);
     }
 
