@@ -44,7 +44,7 @@ jobs:
             sudo chmod -R 775 storage bootstrap/cache || true
 
             echo "--- BUILD & START CONTAINERS ---"
-            sudo docker compose up -d --build
+            sudo docker compose up -d --build --no-deps app
 
             echo "--- WAITING FOR MYSQL TO BE READY ---"
             until sudo docker exec arttteo-mysql mysqladmin ping -u root -proot --silent &> /dev/null; do
