@@ -35,18 +35,14 @@ class PortfoliosRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
                 Tables\Actions\AssociateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\DissociateAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

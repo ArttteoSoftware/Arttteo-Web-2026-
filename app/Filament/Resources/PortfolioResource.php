@@ -46,6 +46,7 @@ class PortfolioResource extends Resource
                     Forms\Components\TextInput::make('duration')->maxLength(255),
                     Forms\Components\TextInput::make('scope')->maxLength(255),
                     Forms\Components\TextInput::make('team_size')->numeric(),
+                    Forms\Components\TextInput::make('client_type')->maxLength(255),
                 ])->columns(2),
 
                 Forms\Components\Section::make('Case Study')->schema([
