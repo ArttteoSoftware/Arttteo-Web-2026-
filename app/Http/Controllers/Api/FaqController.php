@@ -11,9 +11,16 @@ class FaqController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        $faqs = Faq::where('status', true)->orderBy('ordering')->get();
+        $query = Faq::where('status', true);
+
+        if (request()->has('page')) {
+            $query->where('page', request('page'));
+        }
+
+        $faqs = $query->orderBy('ordering')->get();
         return FaqResource::collection($faqs);
     }
 }
