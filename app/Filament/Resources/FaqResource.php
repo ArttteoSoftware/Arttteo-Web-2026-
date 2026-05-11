@@ -24,17 +24,26 @@ class FaqResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('question')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('status')
-                    ->default(true)
-                    ->inline(false)
-                    ->required(),
+                    ->maxLength(255)
+                    ->columnSpanFull(),
                 TinyEditor::make('answer')
                     ->fileAttachmentsDisk('public')
                     ->fileAttachmentsVisibility('public')
                     ->fileAttachmentsDirectory('uploads')
                     ->profile('default')
                     ->columnSpanFull()
+                    ->required(),
+                Forms\Components\Select::make('page')
+                    ->options([
+                        'XR Training Systems' => 'XR Training Systems',
+                        'Workforce Intelligence' => 'Workforce Intelligence',
+                        'Regulated Training Systems' => 'Regulated Training Systems',
+                        'Operational Simulation Digital Twins' => 'Operational Simulation Digital Twins',
+                    ])
+                    ->required(),
+                Forms\Components\Toggle::make('status')
+                    ->default(true)
+                    ->inline(false)
                     ->required(),
             ]);
     }
