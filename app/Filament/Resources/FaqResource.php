@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FaqResource\Pages;
 use App\Models\Faq;
 use Filament\Forms;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 use Filament\Resources\Resource;
@@ -26,19 +27,18 @@ class FaqResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
-                TinyEditor::make('answer')
-                    ->fileAttachmentsDisk('public')
-                    ->fileAttachmentsVisibility('public')
-                    ->fileAttachmentsDirectory('uploads')
-                    ->profile('default')
-                    ->columnSpanFull()
-                    ->required(),
+                TextArea::make('answer')
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\Select::make('page')
                     ->options([
                         'XR Training Systems' => 'XR Training Systems',
                         'Workforce Intelligence' => 'Workforce Intelligence',
                         'Regulated Training Systems' => 'Regulated Training Systems',
                         'Operational Simulation Digital Twins' => 'Operational Simulation Digital Twins',
+                        'Solutions' => 'Solutions',
+                        'Contact' => 'Contact',
+                        'Pilot Program' => 'Pilot Program',
                     ])
                     ->required(),
                 Forms\Components\Toggle::make('status')
