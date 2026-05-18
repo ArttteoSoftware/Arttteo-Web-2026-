@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\TextController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LandingController;
+use App\Http\Controllers\Api\PageController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -23,6 +24,9 @@ Route::get('/portfolios/{id}', [PortfolioController::class, 'show']);
 // Texts
 Route::get('/texts', [TextController::class, 'index']);
 Route::get('/texts/{key}', [TextController::class, 'show']);
+
+// Pages
+Route::get('/pages', [PageController::class, 'index']);
 
 // FAQs
 Route::get('/faqs', [FaqController::class, 'index']);

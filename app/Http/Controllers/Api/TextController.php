@@ -13,15 +13,20 @@ class TextController extends Controller
      */
     public function index()
     {
-        return TextResource::collection(Text::all());
+        $query = Text::with('page');
+
+        if (request()->has('page_id')) {
+            $query->where('page_id', request('page_id'));
+        } elseif (request()->has('page')) {
+            $query->whereHas('page', fn ($q) => $q->where('name', request('page')));
+        }
+
+        return TextResource::collection($query->get());
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($key)
     {
-        $text = Text::where('key', $key)->firstOrFail();
+        $text = Text::with('page')->where('key', $key)->firstOrFail();
         return new TextResource($text);
     }
 }

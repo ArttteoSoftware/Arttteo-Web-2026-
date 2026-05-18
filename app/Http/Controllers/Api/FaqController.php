@@ -14,10 +14,12 @@ class FaqController extends Controller
 
     public function index()
     {
-        $query = Faq::where('status', true);
+        $query = Faq::with('page')->where('status', true);
 
         if (request()->has('page')) {
-            $query->where('page', request('page'));
+            $query->whereHas('page', fn ($q) => $q->where('name', request('page')));
+        } elseif (request()->has('page_id')) {
+            $query->where('page_id', request('page_id'));
         }
 
         $faqs = $query->orderBy('ordering')->get();

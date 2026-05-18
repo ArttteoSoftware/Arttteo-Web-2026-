@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FaqResource\Pages;
 use App\Models\Faq;
+use App\Models\Page;
 use Filament\Forms;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
@@ -30,16 +31,8 @@ class FaqResource extends Resource
                 TextArea::make('answer')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Select::make('page')
-                    ->options([
-                        'XR Training Systems' => 'XR Training Systems',
-                        'Workforce Intelligence' => 'Workforce Intelligence',
-                        'Regulated Training Systems' => 'Regulated Training Systems',
-                        'Operational Simulation Digital Twins' => 'Operational Simulation Digital Twins',
-                        'Solutions' => 'Solutions',
-                        'Contact' => 'Contact',
-                        'Pilot Program' => 'Pilot Program',
-                    ])
+                Forms\Components\Select::make('page_id')
+                    ->relationship('page', 'name')
                     ->required(),
                 Forms\Components\Toggle::make('status')
                     ->default(true)
