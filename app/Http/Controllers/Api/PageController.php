@@ -14,11 +14,12 @@ class PageController extends Controller
         return PageResource::collection($pages);
     }
 
-    public function show(int $id)
+    public function show(string $name)
     {
         $page = Page::with(['sections.contents.items', 'faqs'])
             ->where('status', true)
-            ->findOrFail($id);
+            ->where('name', $name)
+            ->firstOrFail();
 
         return new PageResource($page);
     }
