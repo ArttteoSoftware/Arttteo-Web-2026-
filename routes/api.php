@@ -27,6 +27,7 @@ Route::get('/texts/{key}', [TextController::class, 'show']);
 
 // Pages
 Route::get('/pages', [PageController::class, 'index']);
+Route::get('/pages/{id}', [PageController::class, 'show']);
 
 // FAQs
 Route::get('/faqs', [FaqController::class, 'index']);

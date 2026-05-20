@@ -28,6 +28,11 @@ class PageResource extends JsonResource
                     'title' => $content->title,
                     'description' => $content->description,
                     'image' => $content->image ? url('storage/' . $content->image) : null,
+                    'items' => $content->items->map(fn($item) => [
+                        'id' => $item->id,
+                        'text' => $item->text,
+                        'image' => $item->image ? url('storage/' . $item->image) : null,
+                    ]),
                 ]),
             ])),
             'faqs' => $this->whenLoaded('faqs', fn() => $this->faqs->map(fn($faq) => [
