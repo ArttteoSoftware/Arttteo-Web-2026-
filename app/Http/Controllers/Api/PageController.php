@@ -10,7 +10,7 @@ class PageController extends Controller
 {
     public function index()
     {
-        $pages = Page::where('status', true)->orderBy('ordering')->get();
+        $pages = Page::with(['sections.contents', 'faqs'])->where('status', true)->orderBy('ordering')->get();
         return PageResource::collection($pages);
     }
 }

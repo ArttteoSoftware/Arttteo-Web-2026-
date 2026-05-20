@@ -12,6 +12,29 @@ class PageResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'category' => $this->category?->value,
+            'title' => $this->title,
+            'description' => $this->description,
+            'image' => $this->image ? url('storage/' . $this->image) : null,
+            'sections' => $this->whenLoaded('sections', fn() => $this->sections->map(fn($section) => [
+                'id' => $section->id,
+                'name' => $section->name,
+                'title' => $section->title,
+                'description' => $section->description,
+                'image' => $section->image ? url('storage/' . $section->image) : null,
+                'contents' => $section->contents->map(fn($content) => [
+                    'id' => $content->id,
+                    'category' => $content->category,
+                    'title' => $content->title,
+                    'description' => $content->description,
+                    'image' => $content->image ? url('storage/' . $content->image) : null,
+                ]),
+            ])),
+            'faqs' => $this->whenLoaded('faqs', fn() => $this->faqs->map(fn($faq) => [
+                'id' => $faq->id,
+                'question' => $faq->question,
+                'answer' => $faq->answer,
+            ])),
         ];
     }
 }

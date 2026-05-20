@@ -18,6 +18,7 @@ class LandingResource extends Resource
     protected static ?string $pluralModelLabel = 'Landing';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationGroup = 'Content';
 

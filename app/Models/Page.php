@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Enums\PageCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Section;
 
 class Page extends Model
 {
     protected $guarded = [];
+
+    protected $casts = [
+        'category' => PageCategory::class,
+    ];
 
     public function faqs(): HasMany
     {
@@ -17,5 +23,10 @@ class Page extends Model
     public function texts(): HasMany
     {
         return $this->hasMany(Text::class);
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(Section::class)->orderBy('ordering');
     }
 }

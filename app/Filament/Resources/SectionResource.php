@@ -2,49 +2,41 @@
 
 namespace App\Filament\Resources;
 
-use AmidEsfahani\FilamentTinyEditor\TinyEditor;
-use App\Enums\PageCategory;
-use App\Filament\Resources\PageResource\Pages;
-use App\Filament\Resources\PageResource\RelationManagers\FaqsRelationManager;
-use App\Filament\Resources\PageResource\RelationManagers\SectionsRelationManager;
-use App\Models\Page;
+use App\Filament\Resources\SectionResource\Pages;
+use App\Filament\Resources\SectionResource\RelationManagers\ContentsRelationManager;
+use App\Models\Section;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class PageResource extends Resource
+class SectionResource extends Resource
 {
-    protected static ?string $model = Page::class;
+    protected static ?string $model = Section::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Content';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('page_id')
+                    ->relationship('page', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('category')
-                    ->options(PageCategory::options())
-                    ->nullable(),
-                TinyEditor::make('title')
-                    ->profile('default')
-                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('title')
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('description')
                     ->rows(4)
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
                     ->image()
-                    ->directory('pages'),
-                Forms\Components\Toggle::make('status')
-                    ->default(true)
-                    ->inline(false)
-                    ->required(),
+                    ->directory('sections'),
             ]);
     }
 
@@ -54,23 +46,22 @@ class PageResource extends Resource
             ->reorderable('ordering')
             ->defaultSort('ordering')
             ->columns([
+                Tables\Columns\TextColumn::make('page.name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('category')
-                    ->badge()
-                    ->sortable(),
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(),
                 Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\ToggleColumn::make('status'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('category')
-                    ->options(PageCategory::options()),
-                Tables\Filters\TernaryFilter::make('status'),
+                Tables\Filters\SelectFilter::make('page')
+                    ->relationship('page', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -86,17 +77,16 @@ class PageResource extends Resource
     public static function getRelations(): array
     {
         return [
-            SectionsRelationManager::class,
-            FaqsRelationManager::class,
+            ContentsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPages::route('/'),
-            'create' => Pages\CreatePage::route('/create'),
-            'edit' => Pages\EditPage::route('/{record}/edit'),
+            'index' => Pages\ListSections::route('/'),
+            'create' => Pages\CreateSection::route('/create'),
+            'edit' => Pages\EditSection::route('/{record}/edit'),
         ];
     }
 }
