@@ -10,6 +10,17 @@ class Content extends Model
 {
     protected $guarded = [];
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Content $content) {
+            if (is_null($content->ordering)) {
+                $content->ordering = (static::where('section_id', $content->section_id)->max('ordering') ?? 0) + 1;
+            }
+        });
+    }
+
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);

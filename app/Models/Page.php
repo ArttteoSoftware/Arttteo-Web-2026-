@@ -15,6 +15,17 @@ class Page extends Model
         'category' => PageCategory::class,
     ];
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Page $page) {
+            if (is_null($page->ordering)) {
+                $page->ordering = (static::max('ordering') ?? 0) + 1;
+            }
+        });
+    }
+
     public function faqs(): HasMany
     {
         return $this->hasMany(Faq::class);
