@@ -43,6 +43,8 @@ class PortfolioResource extends JsonResource
                 ];
             }),
             'quote_text' => $this->quote_text,
+            'description' => $this->description,
+            'engagement_text' => $this->engagement_text,
         ];
     }
 }
