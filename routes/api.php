@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\TextController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LandingController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\QuoteController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -34,3 +35,6 @@ Route::get('/faqs', [FaqController::class, 'index']);
 
 // Landing
 Route::get('/landings', [LandingController::class, 'index']);
+
+// Quote
+Route::post('/quote', [QuoteController::class, 'send'])->middleware('throttle:5,60');
