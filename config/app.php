@@ -1,5 +1,3 @@
-For a Laravel + Next.js site with a Filament admin panel:
-
 <?php
 
 return [
