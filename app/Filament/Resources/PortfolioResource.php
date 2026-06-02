@@ -53,7 +53,7 @@ class PortfolioResource extends Resource
                     TinyEditor::make('challenge')->profile('default')->columnSpanFull()->label('The Challenge'),
                     TinyEditor::make('solution')->profile('default')->columnSpanFull()->label('The Solution'),
                     TinyEditor::make('result')->profile('default')->columnSpanFull()->label('The Result'),
-                    TinyEditor::make('quote_text')->profile('default')->columnSpanFull()->label('Quote Text'),
+                    Forms\Components\Textarea::make('quote_text')->columnSpanFull()->label('Quote Text'),
                     TinyEditor::make('engagement_text')->profile('default')->columnSpanFull()->label('Engagement Text'),
                 ]),
             ]);
