@@ -16,6 +16,7 @@ class PageResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'image' => $this->image ? url('storage/' . $this->image) : null,
+            'video' => $this->video ? url('storage/' . $this->video) : null,
             'sections' => $this->whenLoaded('sections', fn() => $this->sections->map(fn($section) => [
                 'id' => $section->id,
                 'name' => $section->name,

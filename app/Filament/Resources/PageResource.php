@@ -41,6 +41,10 @@ class PageResource extends Resource
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->directory('pages'),
+                Forms\Components\FileUpload::make('video')
+                    ->directory('pages')
+                    ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'])
+                    ->maxSize(10240),
                 Forms\Components\Toggle::make('status')
                     ->default(true)
                     ->inline(false)
