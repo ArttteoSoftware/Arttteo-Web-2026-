@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LandingController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\QuoteController;
+use App\Http\Controllers\Api\CategoryController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,6 +30,9 @@ Route::get('/texts/{key}', [TextController::class, 'show']);
 // Pages
 Route::get('/pages', [PageController::class, 'index']);
 Route::get('/pages/{name}', [PageController::class, 'show']);
+
+// Categories
+Route::get('/categories', [CategoryController::class, 'index']);
 
 // FAQs
 Route::get('/faqs', [FaqController::class, 'index']);
