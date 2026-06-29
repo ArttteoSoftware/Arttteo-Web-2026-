@@ -33,6 +33,11 @@ class PostResource extends Resource
                     ->required()
                     ->columnSpanFull()
                     ->maxLength(255),
+                Forms\Components\Select::make('category_id')
+                    ->relationship('category', 'name', fn ($query) => $query->where('type', 'post'))
+                    ->label('Category')
+                    ->searchable()
+                    ->preload(),
                 TinyEditor::make('description')
                     ->label('Description')
                     ->fileAttachmentsDisk('public')
@@ -48,6 +53,8 @@ class PostResource extends Resource
                             ->label('Paragraph')
                             ->icon('heroicon-m-bars-3-bottom-left')
                             ->schema([
+                                Forms\Components\TextInput::make('topic')
+                                    ->label('Topic'),
                                 Forms\Components\TextInput::make('title')
                                     ->label('Title'),
                                 TinyEditor::make('content')

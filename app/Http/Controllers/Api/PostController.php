@@ -13,9 +13,13 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::all();
+        $posts = Post::with('category')
+            ->when($request->category_id, fn ($query, $categoryId) => $query->where('category_id', $categoryId))
+            ->latest()
+            ->get();
+
         return PostIndexResource::collection($posts);
     }
 
@@ -24,7 +28,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::findOrFail($id);
+        $post = Post::with('category')->findOrFail($id);
         return new PostResource($post);
     }
 }

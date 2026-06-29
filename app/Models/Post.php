@@ -11,4 +11,9 @@ class Post extends Model
     protected $casts = [
         'content' => 'array',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

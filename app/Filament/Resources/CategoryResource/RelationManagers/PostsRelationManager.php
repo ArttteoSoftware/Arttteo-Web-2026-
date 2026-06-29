@@ -11,20 +11,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PortfoliosRelationManager extends RelationManager
+class PostsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'portfolios';
+    protected static string $relationship = 'posts';
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return $ownerRecord->type === 'portfolio';
+        return $ownerRecord->type === 'post';
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('company_name')
+                Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -33,9 +33,9 @@ class PortfoliosRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('company_name')
+            ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('company_name'),
+                Tables\Columns\TextColumn::make('title'),
             ])
             ->filters([
                 //

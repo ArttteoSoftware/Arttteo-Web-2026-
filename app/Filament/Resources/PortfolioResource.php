@@ -34,7 +34,7 @@ class PortfolioResource extends Resource
                     Forms\Components\TextInput::make('project_name')->required()->maxLength(255),
                     Forms\Components\TextInput::make('year')->numeric(),
                     Forms\Components\Select::make('category_id')
-                        ->relationship('category', 'name')
+                        ->relationship('category', 'name', fn ($query) => $query->where('type', 'portfolio'))
                         ->label('Category')
                         ->searchable()
                         ->preload(),

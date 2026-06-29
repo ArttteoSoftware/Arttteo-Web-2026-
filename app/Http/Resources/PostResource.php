@@ -14,11 +14,11 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $paragraphTitles = [];
+        $paragraphTopics = [];
         if (is_array($this->content)) {
             foreach ($this->content as $block) {
-                if (($block['type'] ?? '') === 'paragraph' && !empty($block['data']['title'])) {
-                    $paragraphTitles[] = $block['data']['title'];
+                if (($block['type'] ?? '') === 'paragraph' && !empty($block['data']['topic'])) {
+                    $paragraphTopics[] = $block['data']['topic'];
                 }
             }
         }
@@ -27,9 +27,13 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'category' => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+            ] : null,
             'image' => $this->image ? url('storage/' . $this->image) : null,
             'content' => $this->content,
-            'paragraph_titles' => $paragraphTitles,
+            'paragraph_topics' => $paragraphTopics,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

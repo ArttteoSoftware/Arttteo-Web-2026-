@@ -19,6 +19,10 @@ class PortfolioIndexResource extends JsonResource
             'company_name' => $this->company_name,
             'project_name' => $this->project_name,
             'main_picture' => $this->main_picture ? url('storage/' . $this->main_picture) : null,
+            'category' => $this->whenLoaded('category', fn () => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+            ] : null),
         ];
     }
 }

@@ -26,6 +26,13 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'portfolio' => 'Portfolio',
+                        'post' => 'Blog',
+                    ])
+                    ->default('portfolio')
+                    ->required(),
             ]);
     }
 
@@ -35,6 +42,10 @@ class CategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => $state === 'post' ? 'Blog' : 'Portfolio')
                     ->sortable(),
             ])
             ->reorderable('sort_order')
@@ -56,6 +67,7 @@ class CategoryResource extends Resource
     {
         return [
             RelationManagers\PortfoliosRelationManager::class,
+            RelationManagers\PostsRelationManager::class,
         ];
     }
 

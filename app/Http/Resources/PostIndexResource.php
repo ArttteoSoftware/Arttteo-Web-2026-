@@ -18,6 +18,10 @@ class PostIndexResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'image' => $this->image ? url('storage/' . $this->image) : null,
+            'category' => $this->whenLoaded('category', fn () => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+            ] : null),
             'created_at' => $this->created_at,
         ];
     }
