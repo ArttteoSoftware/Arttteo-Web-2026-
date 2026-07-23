@@ -99,7 +99,7 @@ jobs:
               \"sudo -u ubuntu git clean -fd -e .env\",
               \"chown -R www-data:www-data storage bootstrap/cache || true\",
               \"chmod -R 775 storage bootstrap/cache || true\",
-              \"docker compose up -d --build --no-deps app\",
+              \"docker compose up -d --build\",
               \"docker exec arttteo-app bash -lc 'composer install --no-interaction --prefer-dist --no-progress && php artisan migrate --force && php artisan optimize:clear'\",
               \"docker compose ps\"
             ]" \
