@@ -99,9 +99,9 @@ jobs:
               \"sudo -u ubuntu git clean -fd -e .env\",
               \"chown -R www-data:www-data storage bootstrap/cache || true\",
               \"chmod -R 775 storage bootstrap/cache || true\",
-              \"docker compose up -d --build\",
+              \"docker compose --env-file /home/ubuntu/configs/.env up -d --build --no-deps app\",
               \"docker exec arttteo-app bash -lc 'composer install --no-interaction --prefer-dist --no-progress && php artisan migrate --force && php artisan optimize:clear'\",
-              \"docker compose ps\"
+              \"docker compose --env-file /home/ubuntu/configs/.env ps\"
             ]" \
             --region eu-central-1 \
             --query "Command.CommandId" \
