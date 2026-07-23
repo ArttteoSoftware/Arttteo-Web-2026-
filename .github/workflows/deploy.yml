@@ -16,10 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # =========================
-      # PROD DEPLOYMENT VIA SSH
-      # =========================
-
       - name: Set up SSH for PROD
         if: github.ref == 'refs/heads/main'
         uses: webfactory/ssh-agent@v0.9.1
@@ -40,13 +36,15 @@ jobs:
               set -e
 
               cd /home/ubuntu/Arttteo-Web-2026-
+
               sudo chown -R ubuntu:ubuntu .
 
               git config --global --add safe.directory "\$(pwd)"
               git remote set-url origin "https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git"
+
               git fetch origin main
               git reset --hard origin/main
-              git clean -fd
+              git clean -fd -e .env
 
               sudo chown -R www-data:www-data storage bootstrap/cache || true
               sudo chmod -R 775 storage bootstrap/cache || true
@@ -54,16 +52,12 @@ jobs:
               sudo docker compose up -d --build --no-deps app
 
               sudo docker exec arttteo-app bash -lc \
-                "composer install --no-interaction --prefer-dist &&
+                "composer install --no-interaction --prefer-dist --no-progress &&
                  php artisan migrate --force &&
                  php artisan optimize:clear"
 
-              sudo docker ps
+              sudo docker compose ps
           EOF
-
-      # =========================
-      # TEST DEPLOYMENT VIA SSM
-      # =========================
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/test'
@@ -87,21 +81,18 @@ jobs:
             --comment "Deploy arttteo-api TEST" \
             --parameters commands="[
               \"set -e\",
-              \"mkdir -p /home/ubuntu\",
-              \"chown ubuntu:ubuntu /home/ubuntu\",
-              \"if [ ! -d /home/ubuntu/Arttteo-Web-2026-/.git ]; then sudo -u ubuntu git clone --branch test https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git /home/ubuntu/Arttteo-Web-2026-; fi\",
-              \"chown -R ubuntu:ubuntu /home/ubuntu/Arttteo-Web-2026-\",
               \"cd /home/ubuntu/Arttteo-Web-2026-\",
+              \"chown -R ubuntu:ubuntu .\",
               \"sudo -u ubuntu git config --global --add safe.directory /home/ubuntu/Arttteo-Web-2026-\",
               \"sudo -u ubuntu git remote set-url origin https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git\",
               \"sudo -u ubuntu git fetch origin test\",
               \"sudo -u ubuntu git reset --hard origin/test\",
-              \"sudo -u ubuntu git clean -fd\",
+              \"sudo -u ubuntu git clean -fd -e .env\",
               \"chown -R www-data:www-data storage bootstrap/cache || true\",
               \"chmod -R 775 storage bootstrap/cache || true\",
               \"docker compose up -d --build --no-deps app\",
-              \"docker exec arttteo-app bash -lc 'composer install --no-interaction --prefer-dist && php artisan migrate --force && php artisan optimize:clear'\",
-              \"docker ps\"
+              \"docker exec arttteo-app bash -lc 'composer install --no-interaction --prefer-dist --no-progress && php artisan migrate --force && php artisan optimize:clear'\",
+              \"docker compose ps\"
             ]" \
             --region eu-central-1 \
             --query "Command.CommandId" \
