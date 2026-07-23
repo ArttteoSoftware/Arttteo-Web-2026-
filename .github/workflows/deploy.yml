@@ -15,7 +15,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
+      # =========================
+      # PROD DEPLOYMENT VIA SSH
+      # =========================
+
       - name: Set up SSH for PROD
         if: github.ref == 'refs/heads/main'
         uses: webfactory/ssh-agent@v0.9.1
@@ -27,17 +31,19 @@ jobs:
         env:
           PULL_TOKEN: ${{ secrets.PULL_TOKEN }}
         run: |
+          set -euo pipefail
+
           ssh \
             -o StrictHostKeyChecking=no \
             -o ConnectTimeout=15 \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" << EOF
               set -e
 
               cd /home/ubuntu/Arttteo-Web-2026-
               sudo chown -R ubuntu:ubuntu .
 
-              git config --global --add safe.directory \$(pwd)
-              git remote set-url origin https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git
+              git config --global --add safe.directory "\$(pwd)"
+              git remote set-url origin "https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git"
               git fetch origin main
               git reset --hard origin/main
               git clean -fd
@@ -54,6 +60,10 @@ jobs:
 
               sudo docker ps
           EOF
+
+      # =========================
+      # TEST DEPLOYMENT VIA SSM
+      # =========================
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/test'
@@ -77,8 +87,11 @@ jobs:
             --comment "Deploy arttteo-api TEST" \
             --parameters commands="[
               \"set -e\",
+              \"mkdir -p /home/ubuntu\",
+              \"chown ubuntu:ubuntu /home/ubuntu\",
+              \"if [ ! -d /home/ubuntu/Arttteo-Web-2026-/.git ]; then sudo -u ubuntu git clone --branch test https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git /home/ubuntu/Arttteo-Web-2026-; fi\",
+              \"chown -R ubuntu:ubuntu /home/ubuntu/Arttteo-Web-2026-\",
               \"cd /home/ubuntu/Arttteo-Web-2026-\",
-              \"chown -R ubuntu:ubuntu .\",
               \"sudo -u ubuntu git config --global --add safe.directory /home/ubuntu/Arttteo-Web-2026-\",
               \"sudo -u ubuntu git remote set-url origin https://${PULL_TOKEN}@github.com/ArttteoSoftware/Arttteo-Web-2026-.git\",
               \"sudo -u ubuntu git fetch origin test\",
@@ -88,7 +101,7 @@ jobs:
               \"chmod -R 775 storage bootstrap/cache || true\",
               \"docker compose up -d --build --no-deps app\",
               \"docker exec arttteo-app bash -lc 'composer install --no-interaction --prefer-dist && php artisan migrate --force && php artisan optimize:clear'\",
-              \"docker compose ps\"
+              \"docker ps\"
             ]" \
             --region eu-central-1 \
             --query "Command.CommandId" \
@@ -101,17 +114,14 @@ jobs:
             --instance-id "$INSTANCE_ID" \
             --region eu-central-1 || true
 
-          aws ssm get-command-invocation \
+          RESULT=$(aws ssm get-command-invocation \
             --command-id "$COMMAND_ID" \
             --instance-id "$INSTANCE_ID" \
-            --region eu-central-1
+            --region eu-central-1)
 
-          STATUS=$(aws ssm get-command-invocation \
-            --command-id "$COMMAND_ID" \
-            --instance-id "$INSTANCE_ID" \
-            --region eu-central-1 \
-            --query "Status" \
-            --output text)
+          echo "$RESULT"
+
+          STATUS=$(echo "$RESULT" | jq -r '.Status')
 
           if [ "$STATUS" != "Success" ]; then
             echo "TEST deployment failed. SSM status: $STATUS"
