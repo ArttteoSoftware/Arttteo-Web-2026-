@@ -26,6 +26,7 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: SSH into EC2 and deploy container
+        if: github.ref == 'refs/heads/main'
         env:
           PULL_TOKEN: ${{ secrets.PULL_TOKEN }}
         run: |
